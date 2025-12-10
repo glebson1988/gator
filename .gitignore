@@ -1,0 +1,8 @@
+# Go build cache artifacts
+.cache/
+
+# Generated stdlib copies that should not be tracked
+/slices.go
+/sort.go
+/zsortanyfunc.go
+/zsortordered.go

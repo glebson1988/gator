@@ -1,17 +1,21 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/glebson1988/gator/internal/config"
+	"github.com/glebson1988/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
-type State struct {
-	Cfg *config.Config
+type state struct {
+	db  *database.Queries
+	cfg *config.Config
 }
 
-type Command struct {
+type command struct {
 	Name string
 	Args []string
 }
@@ -22,15 +26,20 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	programState := &State{
-		Cfg: &cfg,
+	db, err := sql.Open("postgres", cfg.DBURL)
+	dbQueries := database.New(db)
+
+	programState := &state{
+		cfg: &cfg,
+		db:  dbQueries,
 	}
 
 	cmds := Commands{
-		registeredCommands: make(map[string]func(*State, Command) error),
+		registeredCommands: make(map[string]func(*state, command) error),
 	}
 
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 
 	if len(os.Args) < 2 {
 		log.Fatalf("Too few arguments")
@@ -39,7 +48,7 @@ func main() {
 	cmdName := os.Args[1]
 	cmdArgs := os.Args[2:]
 
-	cmd := Command{
+	cmd := command{
 		Name: cmdName,
 		Args: cmdArgs,
 	}

@@ -41,6 +41,7 @@ func main() {
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
 	cmds.register("users", handlerListUsers)
+	cmds.register("feeds", handlerListFeeds)
 	cmds.register("reset", handlerReset)
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)

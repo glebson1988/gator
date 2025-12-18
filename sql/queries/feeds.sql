@@ -17,3 +17,7 @@ SELECT
     users.name AS creator_name
 FROM feeds
 JOIN users ON feeds.user_id = users.id;
+
+
+-- name: GetFeedByUrl :one
+SELECT * FROM feeds where feeds.url = $1;

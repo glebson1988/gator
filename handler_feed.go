@@ -9,23 +9,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.Name)
 	}
 
 	name := cmd.Args[0]
 	url := cmd.Args[1]
-
-	userName := s.cfg.CurrentUserName
-	if userName == "" {
-		return fmt.Errorf("no current user, please login or register first")
-	}
-
-	user, err := s.db.GetUser(context.Background(), userName)
-	if err != nil {
-		return fmt.Errorf("couldn't get current user: %w", err)
-	}
 
 	now := time.Now().UTC()
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{

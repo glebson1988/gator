@@ -22,6 +22,8 @@ WITH inserted_feed_follow AS (
     $1,
     $2
   )
+  ON CONFLICT (user_id, feed_id)
+  DO UPDATE SET updated_at = NOW()
   RETURNING id, created_at, updated_at, user_id, feed_id
 )
 SELECT

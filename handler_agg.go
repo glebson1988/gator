@@ -4,7 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/glebson1988/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 func handlerAgg(s *state, cmd command) error {
@@ -51,7 +55,30 @@ func scrapeFeeds(s *state) error {
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		publishedTime, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			fmt.Printf("error parsing date for RSSItem %s: %v\n", item.Title, err)
+			continue
+		}
+
+		_, err = s.db.CreatePost(ctx, database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: sql.NullString{String: item.Description, Valid: item.Description != ""},
+			PublishedAt: sql.NullTime{Time: publishedTime, Valid: true},
+			FeedID:      feed.ID,
+		})
+
+		if err != nil {
+			if strings.Contains(err.Error(), "unique constraint") {
+				continue // ignore duplicates
+			}
+			fmt.Printf("error creating post: %v\n", err)
+		}
+
 	}
 
 	return nil

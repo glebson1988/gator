@@ -8,6 +8,8 @@ WITH inserted_feed_follow AS (
     $1,
     $2
   )
+  ON CONFLICT (user_id, feed_id)
+  DO UPDATE SET updated_at = NOW()
   RETURNING *
 )
 SELECT

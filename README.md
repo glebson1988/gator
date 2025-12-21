@@ -30,6 +30,24 @@ Create a config file at `~/.gatorconfig.json`:
 
 Ensure your database exists and has the schema applied. The schema lives in `sql/schema`.
 
+### Migrations (goose)
+
+If you use goose:
+
+```bash
+go install github.com/pressly/goose/v3/cmd/goose@latest
+goose -dir sql/schema postgres "$DATABASE_URL" up
+```
+
+### Query codegen (sqlc)
+
+If you change SQL in `sql/queries`, regenerate the query code:
+
+```bash
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+sqlc generate
+```
+
 ## Run
 
 Once installed, use the `gator` binary:

@@ -1,6 +1,6 @@
 # gator
 
-gator is a small RSS aggregation CLI built with Go and Postgres.
+gator is a RSS aggregation CLI built with Go and Postgres.
 
 ## Requirements
 
